@@ -1,4 +1,3 @@
-// src/pages/register.tsx
 import { useState } from 'react';
 import { supabase } from '@/utils/supabaseClient';
 import { useRouter } from 'next/router';
@@ -9,6 +8,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [role, setRole] = useState<'WARGA' | 'RELAWAN'>('WARGA');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -21,14 +21,15 @@ export default function Register() {
         password,
         options: {
           data: {
-            full_name: fullName,
-            role: role, // Kirim peran yang dipilih ke Supabase
+            nama_lengkap: fullName,
+            peran: role, 
+            nomor_telepon: phoneNumber,
           },
         },
       });
 
       if (error) throw error;
-      alert('Registrasi berhasil! Silakan cek email Anda untuk verifikasi.');
+      alert('Registrasi berhasil!');
       router.push('/login');
     } catch (error: any) {
       alert(error.message);
@@ -44,6 +45,7 @@ export default function Register() {
         <form onSubmit={handleRegister} className="space-y-4">
           <input type="text" placeholder="Nama Lengkap" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full p-3 border rounded-lg" required />
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 border rounded-lg" required />
+          <input type="tel" placeholder="Nomor WhatsApp" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="w-full p-3 border rounded-lg" required />
           <input type="password" placeholder="Password (minimal 6 karakter)" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full p-3 border rounded-lg" required />
           <div>
             <label htmlFor="role" className="block text-sm font-medium text-gray-700">Saya mendaftar sebagai:</label>
@@ -56,7 +58,12 @@ export default function Register() {
             {loading ? 'Mendaftarkan...' : 'Daftar'}
           </button>
         </form>
-        <p className="text-center mt-4 text-sm text-gray-600">Sudah punya akun? <Link href="/login" className="font-medium text-blue-600 hover:underline">Login di sini</Link></p>
+        <p className="text-center mt-4 text-sm text-gray-600">
+          Sudah punya akun?{' '}
+          <Link href="/login" className="font-medium text-blue-600 hover:underline">
+            Login di sini
+          </Link>
+        </p>
       </div>
     </div>
   );

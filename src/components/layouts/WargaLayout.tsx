@@ -3,16 +3,16 @@ import { ReactNode, useState, Fragment } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useUser, useSupabaseClient } from '@supabase/auth-helpers-react';
-import { Home, ListTodo, BookOpen, User, Menu, X, LogOut, PlusSquare } from 'lucide-react';
+import { Home, ListTodo, Archive, UserCircle, Menu, X, LogOut, PlusSquare } from 'lucide-react';
 import AuthGuard from '@/components/AuthGuard';
-import { Transition } from '@headlessui/react'; // Perlu install: npm install @headlessui/react
+import { Transition } from '@headlessui/react';
 
-// Daftar item navigasi
+// Daftar item navigasi (disesuaikan)
 const navItems = [
   { href: '/dashboard/warga', label: 'Home', icon: Home },
-  { href: '/dashboard/warga/aktivitas', label: 'Aktivitas', icon: ListTodo },
-  { href: '/dashboard/warga/sumber-daya', label: 'Sumber Daya', icon: BookOpen }, // Diubah dari Edukasi
-  { href: '/dashboard/warga/profil', label: 'Profil', icon: User },
+  { href: '/dashboard/warga/aktivitas', label: 'Aktivitas Saya', icon: ListTodo },
+  { href: '/dashboard/warga/sumber-daya', label: 'Bank Sumber Daya', icon: Archive },
+  { href: '/dashboard/warga/profil', label: 'Profil Saya', icon: UserCircle },
 ];
 
 // Komponen Layout Utama
@@ -53,13 +53,14 @@ function WargaDashboardLayout({ children, pageTitle }: { children: ReactNode; pa
 
             {/* Aksi di Kanan (Desktop) */}
             <div className="hidden md:flex items-center space-x-4">
-               <button className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2">
-                 <PlusSquare size={16} /> Buat Laporan
-               </button>
+              <Link href="/dashboard/warga/lapor" legacyBehavior>
+                <a className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2">
+                  <PlusSquare size={16} /> Buat Laporan
+                </a>
+              </Link>
               <div className="relative">
-                {/* Placeholder untuk profile dropdown */}
                 <button onClick={handleLogout} className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-200">
-                    <LogOut size={18}/>
+                  <LogOut size={18}/>
                 </button>
               </div>
             </div>
@@ -87,6 +88,17 @@ function WargaDashboardLayout({ children, pageTitle }: { children: ReactNode; pa
       >
         <div className="md:hidden fixed top-16 left-0 right-0 z-30 bg-white shadow-lg">
           <nav className="flex flex-col p-4 space-y-2">
+            <Link href="/dashboard/warga/lapor" legacyBehavior>
+              <a 
+                className="flex items-center justify-center px-3 py-3 rounded-md text-base font-bold text-white bg-blue-600 hover:bg-blue-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <PlusSquare className="w-5 h-5 mr-3" />
+                <span>Buat Laporan Baru</span>
+              </a>
+            </Link>
+            <div className="border-t my-2"></div>
+
             {navItems.map((item) => (
                <Link key={item.label} href={item.href} legacyBehavior>
                   <a className={`flex items-center px-3 py-2 rounded-md text-base font-medium ${
@@ -107,7 +119,6 @@ function WargaDashboardLayout({ children, pageTitle }: { children: ReactNode; pa
 
       {/* Konten Utama Halaman */}
       <main className="pt-24 container mx-auto px-4 sm:px-6">
-        {/* Konten dari setiap halaman akan muncul di sini */}
         {children}
       </main>
     </div>
@@ -116,7 +127,6 @@ function WargaDashboardLayout({ children, pageTitle }: { children: ReactNode; pa
 
 // Wrapper untuk menggunakan AuthGuard
 export default function WargaLayout({ children, pageTitle }: { children: ReactNode; pageTitle: string }) {
-  // Kita bisa hapus pageTitle dari sini jika tidak digunakan lagi di header
   return (
     <AuthGuard>
       <WargaDashboardLayout pageTitle={pageTitle}>
